@@ -7,6 +7,8 @@ class URobot {
   ByteBuffer msg;
   VersionMessage versionMessage;
   RobotModeData  robotModeData;
+  JointData jointData;
+  CartesianInfo cartesianInfo;
 
   URobot(PApplet parent, String _robotIP) {
     robotIP = _robotIP;
@@ -18,11 +20,11 @@ class URobot {
     set_tcp(new Pose(0, 0, 0, 0, 0, 0));
     //currentPose = client.available() > 0? getCurrentPose() : new Pose();
   }
-  
+
   public void moveHome() {
     client.write("movej(" + homePosition.toString() + ")\n");
   }
-  
+
   public void movec(Pose p1, Pose p2, float speed) {
     client.write("movec(" + p1.toString() + ", " + p2.toString() + ", v=" + speed + ")\n");
   }
@@ -40,7 +42,6 @@ class URobot {
     client.write("if safetyCheck:\n");    
     client.write("    movel(" + p.toString() + ")\n");
     client.write("else:\n");
-    
   }
 
   public void movel(JointPose p, float speed) {
@@ -63,24 +64,23 @@ class URobot {
   }
 
   public Pose getCurrentPose() {    
-    int offset = 408;
-    float x = (float)msg.getDouble(offset); offset += Double.BYTES;
-    float y = (float)msg.getDouble(offset); offset += Double.BYTES;
-    float z = (float)msg.getDouble(offset); offset += Double.BYTES;
-    float rx = (float)msg.getDouble(offset); offset += Double.BYTES;
-    float ry = (float)msg.getDouble(offset); offset += Double.BYTES;
-    float rz = (float)msg.getDouble(offset); offset += Double.BYTES;
+    float x = (float)msg.getDouble();
+    float y = (float)msg.getDouble();
+    float z = (float)msg.getDouble();
+    float rx = (float)msg.getDouble();
+    float ry = (float)msg.getDouble();
+    float rz = (float)msg.getDouble();
 
     Pose p = new Pose(x, y, z, rx, ry, rz);
     currentPose = p;
-       
+
     return currentPose;
   }
 
   int packageCount = 0;
   public void test() {
     if (client.available() > 0) {
-      
+
       switch(packageCount) {
       case 0:
         updateBuffer();
@@ -89,7 +89,7 @@ class URobot {
       default:
         updateBuffer();
         println(msg.getInt());
-        println(MessageType.get(msg.get()));
+        println(MessageType.get(msg.get())); 
         getLoopMessage();
         packageCount = 1;
         break;
@@ -106,35 +106,52 @@ class URobot {
   public void getLoopMessage() { 
     robotModeData = new RobotModeData(msg);
     robotModeData.printRobotData();
+
+    jointData = new JointData(msg);
+    //jointData.printJointData();
+
+    //offsetBufferData(0);
     
+    cartesianInfo = new CartesianInfo(msg);
+    cartesianInfo.printCartesianInfo();
+
     /*
     println("---- ROBOT DATA ----");
-    getCurrentPose();
-    
-    println("//// SUB_PACKAGE");        
-    println("X: " + currentPose.x);
-    println("Y: " + currentPose.y);
-    println("Z: " + currentPose.z);
-    println("RX: " + currentPose.rx);
-    println("RY: " + currentPose.ry);
-    println("RZ: " + currentPose.rz); */
+     getCurrentPose();
+     
+     println("//// SUB_PACKAGE");        
+     println("X: " + currentPose.x);
+     println("Y: " + currentPose.y);
+     println("Z: " + currentPose.z);
+     println("RX: " + currentPose.rx);
+     println("RY: " + currentPose.ry);
+     println("RZ: " + currentPose.rz); */
     //updateBuffer();
-    
-     /* int count = 5; 
+
+    /* int count = 5; 
      while (count < 679) {      
-         int packageSize = msg.getInt(count); count += Integer.BYTES;
-         int packageType = msg.get(count); count ++;          
-         count += packageSize - Integer.BYTES - 1; 
-         
-         if(packageType == 4) println(count);
-         println("---- DATA ----");
-         println("Package Size: " + packageSize);
-         println("Package Type: " + packageType);
+     int packageSize = msg.getInt(count); count += Integer.BYTES;
+     int packageType = msg.get(count); count ++;          
+     count += packageSize - Integer.BYTES - 1; 
+     
+     if(packageType == 4) println(count);
+     println("---- DATA ----");
+     println("Package Size: " + packageSize);
+     println("Package Type: " + packageType);
      }*/
   }
-  
+
   void updateBuffer() {  
     byte[] m = client.readBytes();
-     msg = ByteBuffer.wrap(m);  
+    msg = ByteBuffer.wrap(m);
+  }
+
+  void offsetBufferData(int times) {
+    for (int i =0; i < times; i++) {
+      int p = msg.position();
+      int s = msg.getInt();
+      //println(i, p);
+      msg.position(p + s);
+    }
   }
 }

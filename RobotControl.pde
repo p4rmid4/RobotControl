@@ -10,7 +10,7 @@ URobot robot;
 
 void setup() {
   size(640, 480);
-  robot = new URobot(this, "192.168.0.53"); //192.168.56.102 <--- this is the old IP  
+  robot = new URobot(this, "192.168.0.206"); //192.168.56.102 <--- this is the old IP  
   robot.moveHome();
   delay(3000);
 }

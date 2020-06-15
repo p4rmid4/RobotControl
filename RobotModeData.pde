@@ -1,7 +1,7 @@
 class RobotModeData {
  ByteBuffer msg;
  int packageSize;
- int packageType;
+ RobotStatePackageType packageType;
  long timeStamp;
  boolean isRealRobotConnected;
  boolean isRealRobotEnabled;
@@ -19,7 +19,7 @@ class RobotModeData {
   RobotModeData(ByteBuffer message) {
     msg = message;    
     packageSize = msg.getInt();
-    packageType = msg.get();
+    packageType = RobotStatePackageType.get(msg.get());
     timeStamp = msg.getLong(); 
     isRealRobotConnected = boolean(msg.get());
     isRealRobotEnabled = boolean(msg.get());
@@ -32,7 +32,9 @@ class RobotModeData {
     controlMode = ControlMode.get(msg.get());
     targetSpeedFraction = msg.getDouble();
     speedScaling = msg.getDouble();
-    targetSpeedFractionLimit = msg.getDouble();
+    targetSpeedFractionLimit = msg.getDouble(); 
+    msg.get(); // <-- reserved byte, according to the file Client_Interface_V3.13andV5.8.xlsx
+    // from https://www.universal-robots.com/articles/ur-articles/remote-control-via-tcpip/
   }
   
   void printRobotData() {

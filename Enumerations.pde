@@ -2,7 +2,7 @@ enum ControlMode {
   POSITION(0), 
     TEACH(1), 
     FORCE(2), 
-    TORQUE(3),
+    TORQUE(3), 
     UNDEFINED(4);
 
   private int mode;
@@ -14,19 +14,19 @@ enum ControlMode {
   public int getValue() {
     return mode;
   }
-  
+
   static public ControlMode get(int i) {
     switch(i) {
-     case 0:
-       return POSITION;
-     case 1:
-       return TEACH;
-     case 2:
-       return FORCE;
-     case 3:
-       return TORQUE;    
-     default:
-       return UNDEFINED;
+    case 0:
+      return POSITION;
+    case 1:
+      return TEACH;
+    case 2:
+      return FORCE;
+    case 3:
+      return TORQUE;    
+    default:
+      return UNDEFINED;
     }
   }
 }
@@ -52,29 +52,29 @@ enum RobotMode {
   public int getValue() {
     return mode;
   }
-  
+
   static public RobotMode get(int i) {
     switch(i) {
-     case -1:
-       return NO_CONTROLLER;
-     case 0:
-       return DISCONNECTED;
-     case 1:
-       return CONFIRM_SAFETY;
-     case 2:
-       return BOOTING;
-     case 3:
-       return POWER_OFF;
-     case 4:
-       return POWER_ON;
-     case 5:
-       return IDLE;
-     case 7:
-       return RUNNING;
-     case 8:
-       return UPDATING_FIRMWARE;
-     default:
-     return NO_CONTROLLER;
+    case -1:
+      return NO_CONTROLLER;
+    case 0:
+      return DISCONNECTED;
+    case 1:
+      return CONFIRM_SAFETY;
+    case 2:
+      return BOOTING;
+    case 3:
+      return POWER_OFF;
+    case 4:
+      return POWER_ON;
+    case 5:
+      return IDLE;
+    case 7:
+      return RUNNING;
+    case 8:
+      return UPDATING_FIRMWARE;
+    default:
+      return NO_CONTROLLER;
     }
   }
 }
@@ -94,7 +94,8 @@ enum JointMode {
     VIOLATION(251), 
     FAULT(252), 
     RUNNING(253), 
-    IDLE(255);
+    IDLE(255),
+    UNDEFINED(-1);
 
   private int mode;
 
@@ -104,6 +105,43 @@ enum JointMode {
 
   public int getValue() {
     return mode;
+  }
+
+  static public JointMode get(int i) {
+    switch(i) {
+    case 235:
+      return RESET;
+    case 236:
+      return SHUTTING_DOWN;
+    case 237:
+      return PART_D_CALIBRATION;
+    case 238:
+      return BACKDRIVE;
+    case 239:
+      return POWER_OFF;
+    case 245:
+      return NOT_RESPONDING;
+    case 246:
+      return MOTOR_INITIALISATION;
+    case 247:
+      return BOOTING;
+    case 248:
+      return PART_D_CALIBRATION_ERROR;
+    case 249:
+      return BOOTLOADER;
+    case 250:
+      return CALIBRATION;
+    case 251:
+      return VIOLATION;
+    case 252:
+      return FAULT;
+    case 253:
+      return RUNNING;
+    case 255:
+      return IDLE;
+    default:
+      return UNDEFINED;
+    }
   }
 }
 
@@ -138,51 +176,51 @@ enum MessageSource {
   public int getValue() {
     return val;
   }
-  
+
   static public MessageSource get(int i) {
-    switch(i){
-     case -1:
-     return UNDEFINED;
-     case 0:
-     return JOINT_0;
-     case 1:
-     return JOINT_1;
-     case 2:
-     return JOINT_2;
-     case 3:
-     return JOINT_3;
-     case 4:
-     return JOINT_4;
-     case 5:
-     return JOINT_5;
-     case 6:
-     return TOOL;
-     case 68:
-     return EUROMAP_2;
-     case 67:
-     return EUROMAP_1;
-     case 66:
-     return TEACH_PENDANT_2;
-     case 65:
-     return TEACH_PENDANT_1;
-     case 20:
-     return SAFETY_PROCESSOR_UA;
-     case 30:
-     return SAFETY_PROCESSOR_UB;
-     case -2:
-     return ROBOTINTERFACE;
-     case -3:
-     return RTMACHINE;
-     case -4:
-     return SIMULATED_ROBOT;
-     case -5:
-     return GUI;
-     case 7:
-     return CONTROLLER;
-     case 8:
-     return RTDE;
-     default:
-     return UNDEFINED;
+    switch(i) {
+    case -1:
+      return UNDEFINED;
+    case 0:
+      return JOINT_0;
+    case 1:
+      return JOINT_1;
+    case 2:
+      return JOINT_2;
+    case 3:
+      return JOINT_3;
+    case 4:
+      return JOINT_4;
+    case 5:
+      return JOINT_5;
+    case 6:
+      return TOOL;
+    case 68:
+      return EUROMAP_2;
+    case 67:
+      return EUROMAP_1;
+    case 66:
+      return TEACH_PENDANT_2;
+    case 65:
+      return TEACH_PENDANT_1;
+    case 20:
+      return SAFETY_PROCESSOR_UA;
+    case 30:
+      return SAFETY_PROCESSOR_UB;
+    case -2:
+      return ROBOTINTERFACE;
+    case -3:
+      return RTMACHINE;
+    case -4:
+      return SIMULATED_ROBOT;
+    case -5:
+      return GUI;
+    case 7:
+      return CONTROLLER;
+    case 8:
+      return RTDE;
+    default:
+      return UNDEFINED;
     }
   }
 }
@@ -206,27 +244,78 @@ enum MessageType {
   public int getValue() {
     return val;
   }
-  
+
   static public MessageType get(int i) {
-    switch(i){
-     case -1:
-     return DISCONNECT;
-     case 16:
-     return ROBOT_STATE;
-     case 20:
-     return ROBOT_MESSAGE;
-     case 22:
-     return HMC_MESSAGE;
-     case 5:
-     return MODBUS_INFO_MESSAGE;
-     case 23:
-     return SAFETY_SETUP_BROADCAST_MESSAGE;
-     case 24:
-     return SAFETY_COMPLIANCE_TOLERANCES_MESSAGE;
-     case 25:
-     return PROGRAM_STATE_MESSAGE;
-     default:
-     return DISCONNECT;
+    switch(i) {
+    case -1:
+      return DISCONNECT;
+    case 16:
+      return ROBOT_STATE;
+    case 20:
+      return ROBOT_MESSAGE;
+    case 22:
+      return HMC_MESSAGE;
+    case 5:
+      return MODBUS_INFO_MESSAGE;
+    case 23:
+      return SAFETY_SETUP_BROADCAST_MESSAGE;
+    case 24:
+      return SAFETY_COMPLIANCE_TOLERANCES_MESSAGE;
+    case 25:
+      return PROGRAM_STATE_MESSAGE;
+    default:
+      return DISCONNECT;
+    }
+  }
+}
+
+enum RobotStatePackageType {
+  ROBOT_MODE_DATA(0), 
+    JOINT_DATA(1), 
+    TOOL_DATA(2), 
+    MASTERBOARD_DATA(3), 
+    CARTESION_INFO(4), 
+    KINEMATICS_INFO(5), 
+    CONFIGURATION_DATA(6), 
+    FORCE_MODE_DATA(7), 
+    ADDITIONAL_INFO(8), 
+    CALIBRATION_DATA(9),
+    UNDEFINED(-1);
+
+  private int val;
+
+  private RobotStatePackageType(int _val) {
+    val = _val;
+  } 
+
+  public int getValue() {
+    return val;
+  }
+
+  static public RobotStatePackageType get(int i) {
+    switch(i) {
+    case 0:
+      return ROBOT_MODE_DATA;
+    case 1:
+      return JOINT_DATA;
+    case 2:
+      return TOOL_DATA;
+    case 3:
+      return MASTERBOARD_DATA;
+    case 4:
+      return CARTESION_INFO;
+    case 5:
+      return KINEMATICS_INFO;
+    case 6:
+      return CONFIGURATION_DATA;
+    case 7:
+      return FORCE_MODE_DATA;
+    case 8:
+      return ADDITIONAL_INFO;
+    case 9:
+      return CALIBRATION_DATA;
+    default:
+      return UNDEFINED;
     }
   }
 }
