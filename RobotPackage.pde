@@ -37,7 +37,7 @@ abstract class SubPackage {
   }
 
   void searchSubPackage(ByteBuffer msg, RobotStatePackageType type) {
-    while (packageType != type) {      
+    while (packageType != type) {    println(msg.position(), packageSize);  
       msg.position(msg.position() + packageSize - 5);
       packageSize = msg.getInt();
       packageType = RobotStatePackageType.get(msg.get());

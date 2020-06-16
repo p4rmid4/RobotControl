@@ -4,6 +4,7 @@ class URobot {
   int robotPort;
   JointPose homePosition;
   Pose currentPose;
+  JointPose currentJointPose;
   ByteBuffer msg;
   VersionMessage versionMessage;
   RobotPackage robotPackage;
@@ -20,6 +21,7 @@ class URobot {
     robotPackage = null;    
     //set_tcp(new Pose(0, 0, 0, 0, 0, 0));
     currentPose = new Pose();
+    currentJointPose = new JointPose();
     thread("updateBuffer");
   }
 
@@ -36,7 +38,11 @@ class URobot {
   }
 
   public void movej(JointPose p, float speed) {
-    client.write("movej(" + p.pose + ", v=" + speed + ")\n");
+    client.write("movej(" + p.toString() + ", v=" + speed + ")\n");
+  }
+  
+  public void movej(JointPose p) {
+    client.write("movej(" + p.toString() + ")\n");
   }
 
   public void movel(Pose p) {
@@ -47,7 +53,7 @@ class URobot {
   }
 
   public void movel(JointPose p, float speed) {
-    client.write("movel(" + p.pose + ", v=" + speed +")\n");
+    client.write("movel(" + p.toString() + ", v=" + speed +")\n");
   }
   public void movel(Pose p, float speed) {
     client.write("movej(" + p.toString() + ", v=" + speed + ")\n");
@@ -58,14 +64,14 @@ class URobot {
   }
 
   public void movep(JointPose p, float speed) {
-    client.write("movep(" + p.pose + ", v=" + speed + ")\n");
+    client.write("movep(" + p.toString() + ", v=" + speed + ")\n");
   }
 
   public void set_tcp(Pose p) {
     client.write("set_tcp(" + p.toString() + ")\n");
   }
 
-  public Pose getCurrentPose() {    
+  public void getCurrentPose() {    
     float x = (float)robotPackage.cartesianInfo.x;
     float y = (float)robotPackage.cartesianInfo.y;
     float z = (float)robotPackage.cartesianInfo.z;
@@ -76,7 +82,15 @@ class URobot {
     Pose p = new Pose(x, y, z, rx, ry, rz);
     currentPose = p;
 
-    return currentPose;
+    x = (float)robotPackage.jointData.individualJoints[0].q_actual;
+    y = (float)robotPackage.jointData.individualJoints[1].q_actual;
+    z = (float)robotPackage.jointData.individualJoints[2].q_actual;
+    rx = (float)robotPackage.jointData.individualJoints[3].q_actual;
+    ry = (float)robotPackage.jointData.individualJoints[4].q_actual;
+    rz = (float)robotPackage.jointData.individualJoints[5].q_actual;
+
+    JointPose jp = new JointPose(x, y, z, rx, ry, rz);
+    currentJointPose = jp;
   }
   
 

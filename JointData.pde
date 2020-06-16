@@ -16,13 +16,13 @@ class JointData extends SubPackage{
     println("Package Size: " + packageSize);
     println("Package Type: " + packageType);
     for(int i = 0; i < individualJoints.length; i++) {
-      println(String.format("Joint #%s q_actual: %.9s", i, individualJoints[i].q_actual));
-      println(String.format("Joint #%s q_target: %.9s", i, individualJoints[i].q_target));
-      println(String.format("Joint #%s qd_actual: %.9s", i, individualJoints[i].qd_actual));
-      println(String.format("Joint #%s I_actual: %.9s", i, individualJoints[i].I_actual));
-      println(String.format("Joint #%s V_actual: %.9s", i, individualJoints[i].V_actual));
-      println(String.format("Joint #%s T_motor: %.9s", i, individualJoints[i].T_motor));
-      println(String.format("Joint #%s T_micro: %.9s", i, individualJoints[i].T_micro));
+      println(String.format("Joint #%s q_actual: %f", i, individualJoints[i].q_actual));
+      println(String.format("Joint #%s q_target: %f", i, individualJoints[i].q_target));
+      println(String.format("Joint #%s qd_actual: %f", i, individualJoints[i].qd_actual));
+      println(String.format("Joint #%s I_actual: %f", i, individualJoints[i].I_actual));
+      println(String.format("Joint #%s V_actual: %f", i, individualJoints[i].V_actual));
+      println(String.format("Joint #%s T_motor: %f", i, individualJoints[i].T_motor));
+      println(String.format("Joint #%s T_micro: %f", i, individualJoints[i].T_micro));
       println(String.format("Joint #%s jointMode: %s", i, individualJoints[i].jointMode));
     } 
     println();

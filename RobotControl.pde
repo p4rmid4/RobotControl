@@ -19,7 +19,7 @@ URobot robot;
 
 void setup() {
   size(640, 480);
-  robot = new URobot(this, "192.168.0.64");
+  robot = new URobot(this, "192.168.0.206");
   //textMode(SHAPE);
 }
 
@@ -33,7 +33,10 @@ void keyPressed() {
     robot.moveHome();
   }
   if (key == 'q') {    
-    robot.movel(new Pose(), 0.3);
+    robot.movel(new Pose(), 0.6);
+  }
+  if (key == 'w') {    
+    robot.movej(new JointPose(), 0.6);
   }
 }
 
@@ -73,6 +76,14 @@ void displayRobotInfo() {
     textSize(11);
     text(String.format("X: %.4f m\nY: %.4f m\nZ: %.4f m", robot.currentPose.x, robot.currentPose.y, robot.currentPose.z), 10, 65);
     text(String.format("RX: %.4f rad\nRY: %.4f rad\nRZ: %.4f rad", robot.currentPose.rx, robot.currentPose.ry, robot.currentPose.rz), 10, 120);
+    
+    textSize(13);
+    textAlign(LEFT, CENTER);
+    text("JOINT ROTATIONS:", 10, 190);
+    textAlign(LEFT, TOP);
+    textSize(11);
+    text(String.format("JOINT_0: %.4f rad\nJOINT_1: %.4f rad\nJOINT_2: %.4f rad", robot.currentJointPose.joint0, robot.currentJointPose.joint1, robot.currentJointPose.joint2), 10, 205);
+    text(String.format("JOINT_3: %.4f rad\nJOINT_4: %.4f rad\nJOINT_5: %.4f rad", robot.currentJointPose.joint3, robot.currentJointPose.joint4, robot.currentJointPose.joint5), 10, 260);
     pop();
   }
 }
