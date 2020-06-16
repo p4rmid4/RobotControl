@@ -1,5 +1,4 @@
-class VersionMessage {
-  ByteBuffer msg;
+class VersionMessage {  
   int messageSize;
   MessageType messageType;
   long timeStamp;
@@ -14,7 +13,7 @@ class VersionMessage {
   String buildDate;
 
   VersionMessage(ByteBuffer message) { 
-    msg = message;    
+    ByteBuffer msg = message.duplicate();    
     messageSize = msg.getInt();
     messageType = MessageType.get(msg.get());
     timeStamp = msg.getLong(); 

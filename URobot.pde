@@ -6,9 +6,8 @@ class URobot {
   Pose currentPose;
   ByteBuffer msg;
   VersionMessage versionMessage;
-  RobotModeData  robotModeData;
-  JointData jointData;
-  CartesianInfo cartesianInfo;
+  RobotPackage robotPackage;
+  boolean isProgramRunning;
 
   URobot(PApplet parent, String _robotIP) {
     robotIP = _robotIP;
@@ -16,9 +15,12 @@ class URobot {
 
     client = new Client(parent, robotIP, robotPort);
     homePosition = new JointPose(0, -PI/2, 0, -PI/2, 0, 0);
-    msg = ByteBuffer.allocate(682);
-    set_tcp(new Pose(0, 0, 0, 0, 0, 0));
-    //currentPose = client.available() > 0? getCurrentPose() : new Pose();
+    msg = null;
+    versionMessage = null;
+    robotPackage = null;    
+    //set_tcp(new Pose(0, 0, 0, 0, 0, 0));
+    currentPose = new Pose();
+    thread("updateBuffer");
   }
 
   public void moveHome() {
@@ -64,39 +66,19 @@ class URobot {
   }
 
   public Pose getCurrentPose() {    
-    float x = (float)msg.getDouble();
-    float y = (float)msg.getDouble();
-    float z = (float)msg.getDouble();
-    float rx = (float)msg.getDouble();
-    float ry = (float)msg.getDouble();
-    float rz = (float)msg.getDouble();
+    float x = (float)robotPackage.cartesianInfo.x;
+    float y = (float)robotPackage.cartesianInfo.y;
+    float z = (float)robotPackage.cartesianInfo.z;
+    float rx = (float)robotPackage.cartesianInfo.rx;
+    float ry = (float)robotPackage.cartesianInfo.ry;
+    float rz = (float)robotPackage.cartesianInfo.rz;
 
     Pose p = new Pose(x, y, z, rx, ry, rz);
     currentPose = p;
 
     return currentPose;
   }
-
-  int packageCount = 0;
-  public void test() {
-    if (client.available() > 0) {
-
-      switch(packageCount) {
-      case 0:
-        updateBuffer();
-        getVersionMessage();
-        break;      
-      default:
-        updateBuffer();
-        println(msg.getInt());
-        println(MessageType.get(msg.get())); 
-        getLoopMessage();
-        packageCount = 1;
-        break;
-      }
-      packageCount++;
-    }
-  }
+  
 
   public void getVersionMessage() {     
     versionMessage = new VersionMessage(msg);
@@ -104,54 +86,33 @@ class URobot {
   }
 
   public void getLoopMessage() { 
-    robotModeData = new RobotModeData(msg);
-    robotModeData.printRobotData();
-
-    jointData = new JointData(msg);
-    //jointData.printJointData();
-
-    //offsetBufferData(0);
-    
-    cartesianInfo = new CartesianInfo(msg);
-    cartesianInfo.printCartesianInfo();
-
-    /*
-    println("---- ROBOT DATA ----");
-     getCurrentPose();
-     
-     println("//// SUB_PACKAGE");        
-     println("X: " + currentPose.x);
-     println("Y: " + currentPose.y);
-     println("Z: " + currentPose.z);
-     println("RX: " + currentPose.rx);
-     println("RY: " + currentPose.ry);
-     println("RZ: " + currentPose.rz); */
-    //updateBuffer();
-
-    /* int count = 5; 
-     while (count < 679) {      
-     int packageSize = msg.getInt(count); count += Integer.BYTES;
-     int packageType = msg.get(count); count ++;          
-     count += packageSize - Integer.BYTES - 1; 
-     
-     if(packageType == 4) println(count);
-     println("---- DATA ----");
-     println("Package Size: " + packageSize);
-     println("Package Type: " + packageType);
-     }*/
-  }
-
-  void updateBuffer() {  
-    byte[] m = client.readBytes();
-    msg = ByteBuffer.wrap(m);
+    robotPackage = new RobotPackage(msg);
+    robotPackage.printData();
+    isProgramRunning = robotPackage.robotModeData.isProgramRunning;
   }
 
   void offsetBufferData(int times) {
     for (int i =0; i < times; i++) {
       int p = msg.position();
-      int s = msg.getInt();
-      //println(i, p);
+      int s = msg.getInt();      
       msg.position(p + s);
+    }
+  }
+}
+
+// function to update the robot's buffer, intended to run on a separate thread
+void updateBuffer() {  
+  while (true) {
+    if (robot.client.available() > 0) {
+      byte[] m = robot.client.readBytes();
+      robot.msg = ByteBuffer.wrap(m);
+
+      if (robot.versionMessage == null) {
+        robot.getVersionMessage();
+      } else {        
+        robot.getLoopMessage();
+        robot.getCurrentPose();
+      }
     }
   }
 }

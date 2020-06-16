@@ -1,5 +1,4 @@
-class Pose {
-  
+class Pose {  
   float x, y, z, rx, ry, rz;
 
   Pose(float _x, float _y, float _z, float _rx, float _ry, float _rz) {
@@ -13,7 +12,8 @@ class Pose {
   }
   
   Pose() {
-    
+    x = -0.18; y = -0.6; z = 0.23;
+    rx = 0.0; ry = PI; rz = 0.0;
   }
 
   String interpolate_pose(Pose p, float alpha) {

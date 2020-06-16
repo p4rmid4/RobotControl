@@ -1,25 +1,23 @@
-class RobotModeData {
- ByteBuffer msg;
- int packageSize;
- RobotStatePackageType packageType;
- long timeStamp;
- boolean isRealRobotConnected;
- boolean isRealRobotEnabled;
- boolean isRobotPowerOn;
- boolean isEmergencyStopped;
- boolean isProtectiveStopped;
- boolean isProgramRunning;
- boolean isProgramPaused;
- RobotMode robotMode;
- ControlMode controlMode;
- double targetSpeedFraction;
- double speedScaling;
- double targetSpeedFractionLimit;
-  
+class RobotModeData extends SubPackage{ 
+  long timeStamp;
+  boolean isRealRobotConnected;
+  boolean isRealRobotEnabled;
+  boolean isRobotPowerOn;
+  boolean isEmergencyStopped;
+  boolean isProtectiveStopped;
+  boolean isProgramRunning;
+  boolean isProgramPaused;
+  RobotMode robotMode;
+  ControlMode controlMode;
+  double targetSpeedFraction;
+  double speedScaling;
+  double targetSpeedFractionLimit;
+
   RobotModeData(ByteBuffer message) {
-    msg = message;    
-    packageSize = msg.getInt();
-    packageType = RobotStatePackageType.get(msg.get());
+    super(message, RobotStatePackageType.ROBOT_MODE_DATA);
+    ByteBuffer msg = message.duplicate();
+    msg.position(position);
+    
     timeStamp = msg.getLong(); 
     isRealRobotConnected = boolean(msg.get());
     isRealRobotEnabled = boolean(msg.get());
@@ -36,8 +34,8 @@ class RobotModeData {
     msg.get(); // <-- reserved byte, according to the file Client_Interface_V3.13andV5.8.xlsx
     // from https://www.universal-robots.com/articles/ur-articles/remote-control-via-tcpip/
   }
-  
-  void printRobotData() {
+
+  void printData() {
     println("---- ROBOT MODE DATA ----");
     println("Package Size: " + packageSize);
     println("Package Type: " + packageType);

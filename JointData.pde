@@ -1,20 +1,17 @@
-class JointData {
-  ByteBuffer msg;
-  int packageSize;
-  RobotStatePackageType packageType;
+class JointData extends SubPackage{  
   JointInstanceData[] individualJoints = new JointInstanceData[6];
 
   JointData(ByteBuffer message) {
-    msg = message;    
-    packageSize = msg.getInt();
-    packageType = RobotStatePackageType.get(msg.get());
+    super(message, RobotStatePackageType.JOINT_DATA);
+    ByteBuffer msg = message.duplicate();
+    msg.position(position);   
     
     for(int i = 0; i < individualJoints.length; i++) {
       individualJoints[i] = new JointInstanceData(msg);
     }
   }
 
-  void printJointData() {
+  void printData() {
     println("---- ROBOT JOINT DATA ----");
     println("Package Size: " + packageSize);
     println("Package Type: " + packageType);
@@ -32,8 +29,7 @@ class JointData {
   }
 }
 
-class JointInstanceData {
-  ByteBuffer msg;
+class JointInstanceData {  
   double q_actual;
   double q_target;
   double qd_actual;
@@ -44,6 +40,7 @@ class JointInstanceData {
   JointMode jointMode;
 
   JointInstanceData(ByteBuffer message) {
+    ByteBuffer msg;
     msg = message;
     q_actual = msg.getDouble();
     q_target = msg.getDouble();

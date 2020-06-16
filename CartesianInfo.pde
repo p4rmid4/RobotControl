@@ -1,7 +1,4 @@
-class CartesianInfo {
-  ByteBuffer msg;
-  int packageSize;
-  RobotStatePackageType packageType;
+class CartesianInfo extends SubPackage{    
   double x;
   double y;
   double z;
@@ -15,10 +12,10 @@ class CartesianInfo {
   double tcpOffsetRy;
   double tcpOffsetRz;
 
-  CartesianInfo(ByteBuffer message) {
-    msg = message;
-    packageSize = msg.getInt();
-    packageType = RobotStatePackageType.get(msg.get());
+  CartesianInfo(ByteBuffer message) {    
+    super(message, RobotStatePackageType.CARTESION_INFO);
+    ByteBuffer msg = message.duplicate();
+    msg.position(position);
     x = msg.getDouble();
     y = msg.getDouble();
     z = msg.getDouble();
@@ -31,9 +28,9 @@ class CartesianInfo {
     tcpOffsetRx = msg.getDouble();
     tcpOffsetRy = msg.getDouble();
     tcpOffsetRz = msg.getDouble();
-  }
-
-  void printCartesianInfo() {
+  }  
+  
+  void printData() {
     println("---- ROBOT CARTESIAN INFO ----");
     println("Package Size: " + packageSize);
     println("Package Type: " + packageType);

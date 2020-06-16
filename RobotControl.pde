@@ -1,35 +1,78 @@
 /*
-Approach to send URScript commands to a UR-Robot 
+ Approach to send URScript commands to a UR-Robot 
  URScript Reference: http://www.me.umn.edu/courses/me5286/robotlab/Resources/scriptManual-3.5.4.pdf
+ 
+ The controller is always providing data representing the robot's state, such as 
+ positions, temperatures, etc. through a few server sockets in the controller. 
+ The data transmitted from each server socket could be different in detail to each 
+ other. A custom program can be written to read these streams. A full description
+ (excel sheet) can be downloaded here:
+ 
+ https://s3-eu-west-1.amazonaws.com/ur-support-site/16496/Client_Interface_V3.13andV5.8.xlsx
  */
 
 import processing.net.*;
 import java.nio.*;
+import controlP5.*;
 
 URobot robot;
 
 void setup() {
   size(640, 480);
-  robot = new URobot(this, "192.168.0.206"); //192.168.56.102 <--- this is the old IP  
-  robot.moveHome();
-  delay(3000);
+  robot = new URobot(this, "192.168.0.64");
+  //textMode(SHAPE);
 }
 
 void draw() {
-  background(0);
-  robot.test();
+  background(0);  
+  displayRobotInfo();
 }
-
-
 
 void keyPressed() {
   if (key == 'h') {
     robot.moveHome();
   }
-  
+  if (key == 'q') {    
+    robot.movel(new Pose(), 0.3);
+  }
 }
 
-
 void mousePressed() {
-  
+}
+
+void createUI() {
+}
+
+void displayRobotInfo() {
+  if (robot.versionMessage != null) {
+    push();    
+    String name = robot.versionMessage.projectName;
+    int majorVersion = robot.versionMessage.majorVersion;
+    int minorVersion = robot.versionMessage.minorVersion;
+    int bugFixVersion = robot.versionMessage.bugFixVersion;
+    int buildNumber = robot.versionMessage.buildNumber;
+    String buildDate = robot.versionMessage.buildDate;
+    fill(255);
+    textAlign(CENTER, BOTTOM);
+    textSize(9);
+    text(String.format("Universal Robots Software: %s %s.%s.%s.%s | %s", name, majorVersion, minorVersion, bugFixVersion, buildNumber, buildDate), width/2, height-10);
+    
+    textSize(13);
+    textAlign(LEFT, CENTER);
+    if(robot.isProgramRunning) {
+      fill(255,0,0);
+      text("Robot Status: RUNNING", 10, 20);
+    } else {
+      fill(0,255,0);
+      text("Robot Status: STOPPED", 10, 20);      
+    }
+    
+    fill(255);
+    text("CARTESIAN INFO:", 10, 50);
+    textAlign(LEFT, TOP);
+    textSize(11);
+    text(String.format("X: %.4f m\nY: %.4f m\nZ: %.4f m", robot.currentPose.x, robot.currentPose.y, robot.currentPose.z), 10, 65);
+    text(String.format("RX: %.4f rad\nRY: %.4f rad\nRZ: %.4f rad", robot.currentPose.rx, robot.currentPose.ry, robot.currentPose.rz), 10, 120);
+    pop();
+  }
 }
